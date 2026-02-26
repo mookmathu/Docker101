@@ -118,3 +118,10 @@ docker network create wordpress03
 docker run -d --name mysql03 --network wordpress03 -v D:\Docker101\mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=1111 -e MYSQL_DATABASE=wordpress03_db -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=wordpress  mysql:5.7
 docker run -d --name wordpress03 --network wordpress03 -v D:\Docker101\wp:/var/www/html -e WORDPRESS_DB_HOST=mysql03 -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress03_db -p 890:80 wordpress
 docker run --name pma03 --network wordpress03 -p 8890:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
+
+// สร้างไฟล์ docker-compose.yml เพื่อกำหนดบริการต่าง ๆ ที่ต้องการรันในคอนเทนเนอร์
+docker-compose up -d  
+
+// หยุดคอนเทนเนอร์ที่รันอยู่และลบคอนเทนเนอร์ทั้งหมดที่ถูกสร้างขึ้นโดย docker-compose
+docker-compose down 
+
