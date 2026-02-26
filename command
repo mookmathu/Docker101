@@ -85,3 +85,36 @@ docker run -d --name wordpress --network wordpress -p 888:80 -e WORDPRESS_DB_HOS
 docker network connect wordpress mysql // เชื่อมต่อคอนเทนเนอร์ mysql กับเครือข่าย wordpress
 docker network connect wordpress pma // เชื่อมต่อคอนเทนเนอร์ phpmyadmin กับเครือข่าย wordpress
 
+// Show network
+// แสดงรายละเอียดของเครือข่าย "wordpress" เพื่อดูคอนเทนเนอร์ที่เชื่อมต่ออยู่
+docker network inspect wordpress
+
+การเก็บข้อมูล
+1. เก็บที่ข้อมูลคอนเทนเนอร์ 
+2. Volume
+3. 
+
+// แบบที่ 1
+docker exec -it pma sh
+apt-get update
+apt-get install vim
+vi a.text กด i พิมพ์ข้อมูลกด esc พิมพ์ :wq และกด enter เพื่อบันทึก
+
+
+// แบบที่ 2 volume
+docker volume ls // แสดงรายการ volume ที่มีอยู่ในระบบ
+docker volume create <volume_name> // สร้าง volume ใหม่
+docker volume rm <volume_name> // ลบ volume ที่ไม่ต้องการ
+
+// ตรวจสอบรายละเอียดของคอนเทนเนอร์ WordPress ที่กำลังทำงานอยู่
+docker container inspect wordpress
+
+docker run -d --name mysql02 --network wordpress02 -v mysql_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=1111 -e MYSQL_DATABASE=wordpress02_db -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=wordpress  mysql:5.7
+docker run -d --name wordpress02 --network wordpress02 -v wp_volume:/var/www/html -e WORDPRESS_DB_HOST=mysql02 -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress02_db -p 889:80 wordpress
+docker run --name pma02 --network wordpress02 -p 8889:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
+
+// แบบที่ 3 bind mount
+docker network create wordpress03
+docker run -d --name mysql03 --network wordpress03 -v D:\Docker101\mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=1111 -e MYSQL_DATABASE=wordpress03_db -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=wordpress  mysql:5.7
+docker run -d --name wordpress03 --network wordpress03 -v D:\Docker101\wp:/var/www/html -e WORDPRESS_DB_HOST=mysql03 -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress03_db -p 890:80 wordpress
+docker run --name pma03 --network wordpress03 -p 8890:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
